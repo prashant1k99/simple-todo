@@ -14,7 +14,7 @@ type ToDo struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	IsComplete  bool   `json:"isComplete"`
+	IsClosed    bool   `json:"isClosed"`
 	CreatedAt   string `json:"created_at"`
 }
 
@@ -70,7 +70,7 @@ func listTODO() {
 	var todos []ToDo
 	for rows.Next() {
 		var todo ToDo
-		err := rows.Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsComplete, &todo.CreatedAt)
+		err := rows.Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -79,7 +79,7 @@ func listTODO() {
 	}
 
 	for _, todo := range todos {
-		fmt.Printf("ID: %d, Name: %s, Description: %s, IsComplete: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsComplete, todo.CreatedAt)
+		fmt.Printf("ID: %d, Name: %s, Description: %s, IsComplete: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsClosed, todo.CreatedAt)
 	}
 }
 
@@ -103,5 +103,6 @@ func init() {
 	createTodoCmd.Flags().StringP("description", "d", "", "Description of the todo")
 
 	rootCmd.AddCommand(createTodoCmd)
+
 	rootCmd.AddCommand(listTodoCmd)
 }
