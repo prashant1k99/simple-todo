@@ -1,8 +1,10 @@
+/*
+Copyright © 2024 Prashant Singh <prashantco111+github@gmail.com>
+*/
 package main
 
-func main() {
-	initDB()
-	defer closeDB()
+import "github.com/prashant1k99/simple-todo/cmd"
 
-	testQuery()
+func main() {
+	cmd.Execute()
 }
