@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -61,7 +60,6 @@ func initDB() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Database initialized")
 }
 
 func closeDB() {
@@ -70,14 +68,14 @@ func closeDB() {
 	}
 }
 
-func testQuery() {
-	if dbQueries == nil {
-		panic("Database connection is not initialized")
-	}
+// func testQuery() {
+// 	if dbQueries == nil {
+// 		panic("Database connection is not initialized")
+// 	}
 
-	err := dbQueries.Ping()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Database connection is alive")
-}
+// 	err := dbQueries.Ping()
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	fmt.Println("Database connection is alive")
+// }
