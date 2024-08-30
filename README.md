@@ -4,7 +4,7 @@ Simple TODO is a cli is test CLI application that is built to practice GoLang sk
 
 ### Tasks:
 
-1. [ ] Connect with SQLite DB for saving TODOs
+1. [x] Connect with SQLite DB for saving TODOs
 2. [ ] Use Cobra to build TODO application
        a. [ ] Create TODO
        b. [ ] Update TODO
