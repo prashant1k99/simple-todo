@@ -137,6 +137,54 @@ func setToDoStatus(cmd *cobra.Command, args []string) {
 	fmt.Printf("Updated todo with ID: %d\n", id)
 }
 
+var updateTodoCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update a todo",
+	Run:   updateTODO,
+}
+
+func updateTODO(cmd *cobra.Command, args []string) {
+	id, err := cmd.Flags().GetInt("id")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var todo ToDo
+	err = dbQueries.QueryRow("SELECT id, name, description, is_closed, created_at FROM todos WHERE id = ?", id).Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	description, err := cmd.Flags().GetString("description")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if name != "" {
+		todo.Name = name
+	}
+	if description != "" {
+		todo.Description = description
+	}
+
+	_, err = dbQueries.Exec("UPDATE todos SET name = ?, description = ? WHERE id = ?", todo.Name, todo.Description, todo.ID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Updated todo with ID: %d\n", id)
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "simple-todo",
 	Short: "A CLI based simple todo application",
@@ -166,4 +214,9 @@ func init() {
 	setToDoStatusCmd.Flags().IntP("id", "i", 0, "ID of the todo")
 	setToDoStatusCmd.Flags().BoolP("is-closed", "c", false, "Status of the todo")
 	rootCmd.AddCommand(setToDoStatusCmd)
+
+	updateTodoCmd.Flags().IntP("id", "i", 0, "ID of the todo")
+	updateTodoCmd.Flags().StringP("name", "n", "", "Name of the todo")
+	updateTodoCmd.Flags().StringP("description", "d", "", "Description of the todo")
+	rootCmd.AddCommand(updateTodoCmd)
 }
