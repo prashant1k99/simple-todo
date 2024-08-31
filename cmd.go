@@ -36,6 +36,10 @@ var createTodoCmd = &cobra.Command{
 }
 
 func createTODO(todo *ToDo) {
+	if todo.Name == "" {
+		fmt.Println("Name is required to create a TODO")
+		return
+	}
 	fmt.Println("Creating todo", todo.Name)
 	result, err := dbQueries.Exec("INSERT INTO todos (name, description) VALUES (?, ?)", todo.Name, todo.Description)
 	if err != nil {
@@ -79,8 +83,58 @@ func listTODO() {
 	}
 
 	for _, todo := range todos {
-		fmt.Printf("ID: %d, Name: %s, Description: %s, IsComplete: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsClosed, todo.CreatedAt)
+		fmt.Printf("ID: %d, Name: %s, Description: %s, IsClosed: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsClosed, todo.CreatedAt)
 	}
+}
+
+var deleteTodoCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a todo",
+	Run:   deleteTODO,
+}
+
+func deleteTODO(cmd *cobra.Command, args []string) {
+	id, err := cmd.Flags().GetInt("id")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_, err = dbQueries.Exec("DELETE FROM todos WHERE id = ?", id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Deleted todo with ID: %d\n", id)
+}
+
+var setToDoStatusCmd = &cobra.Command{
+	Use:   "set-status",
+	Short: "Set the status of a todo",
+	Run:   setToDoStatus,
+}
+
+func setToDoStatus(cmd *cobra.Command, args []string) {
+	id, err := cmd.Flags().GetInt("id")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	isClosed, err := cmd.Flags().GetBool("is-closed")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	_, err = dbQueries.Exec("UPDATE todos SET is_closed = ? WHERE id = ?", isClosed, id)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("Updated todo with ID: %d\n", id)
 }
 
 var rootCmd = &cobra.Command{
@@ -105,4 +159,11 @@ func init() {
 	rootCmd.AddCommand(createTodoCmd)
 
 	rootCmd.AddCommand(listTodoCmd)
+
+	deleteTodoCmd.Flags().IntP("id", "i", 0, "ID of the todo")
+	rootCmd.AddCommand(deleteTodoCmd)
+
+	setToDoStatusCmd.Flags().IntP("id", "i", 0, "ID of the todo")
+	setToDoStatusCmd.Flags().BoolP("is-closed", "c", false, "Status of the todo")
+	rootCmd.AddCommand(setToDoStatusCmd)
 }
