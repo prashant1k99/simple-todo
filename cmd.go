@@ -31,7 +31,26 @@ var createTodoCmd = &cobra.Command{
 			fmt.Println(err)
 		}
 
-		createTODO(&ToDo{Name: name, Description: description})
+		if name == "" && description == "" {
+			msg, err := RenderCreateForm(&submissionMsg{
+				Name:        "",
+				Description: "",
+			})
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			if !msg.submitted {
+				return
+			}
+			if msg.Name == "" {
+				fmt.Println("Name is required to create a TODO")
+				return
+			}
+			createTODO(&ToDo{Name: msg.Name, Description: msg.Description})
+		} else {
+			createTODO(&ToDo{Name: name, Description: description})
+		}
 	},
 }
 
@@ -149,6 +168,10 @@ func updateTODO(cmd *cobra.Command, args []string) {
 		fmt.Println(err)
 		return
 	}
+	if id == 0 {
+		fmt.Println("ID is required to update a TODO")
+		return
+	}
 
 	var todo ToDo
 	err = dbQueries.QueryRow("SELECT id, name, description, is_closed, created_at FROM todos WHERE id = ?", id).Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
@@ -169,11 +192,24 @@ func updateTODO(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if name != "" {
-		todo.Name = name
-	}
-	if description != "" {
-		todo.Description = description
+	if name == "" && description == "" {
+		msg, err := RenderCreateForm(&submissionMsg{
+			Name:        todo.Name,
+			Description: todo.Description,
+		})
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+		if !msg.submitted {
+			return
+		}
+		if msg.Name == "" {
+			fmt.Println("Name is required to create a TODO")
+			return
+		}
+		todo.Name = msg.Name
+		todo.Description = msg.Description
 	}
 
 	_, err = dbQueries.Exec("UPDATE todos SET name = ?, description = ? WHERE id = ?", todo.Name, todo.Description, todo.ID)
