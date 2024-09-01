@@ -11,8 +11,8 @@ Simple TODO is a cli is test CLI application that is built to practice GoLang sk
        b. [x] Update TODO
        c. [x] Set status of TODO
        d. [x] Delete TODO
-3. [ ] Update the UX by using lipgloss by charm
-       a. [ ] Add table view
+3. [x] Update the UX by using lipgloss by charm
+       a. [x] Add table view
        b. [x] Add Form for creating TODO
        c. [x] Add form for updating TODO
        d. [x] Use List for selecting TODO for update and status-update

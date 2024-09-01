@@ -72,11 +72,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.inputDesc.Blur()
 			}
 		case tea.KeyEnter:
-			if m.focusIndex == 0 {
-				m.focusIndex = 1
-				m.inputName.Blur()
-				m.inputDesc.Focus()
-			} else if m.focusIndex == 1 {
+			if m.focusIndex == 1 {
 				m.submitted = true
 				// Return submission message when form is completed
 				return m, tea.Quit

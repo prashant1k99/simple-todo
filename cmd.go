@@ -9,6 +9,7 @@ import (
 
 	"github.com/prashant1k99/simple-todo/form"
 	"github.com/prashant1k99/simple-todo/list"
+	"github.com/prashant1k99/simple-todo/table"
 	"github.com/spf13/cobra"
 )
 
@@ -110,9 +111,19 @@ func listTODO() {
 		fmt.Println(err)
 		return
 	}
-	for _, todo := range todos {
-		fmt.Printf("ID: %d, Name: %s, Description: %s, IsClosed: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsClosed, todo.CreatedAt)
+	if len(todos) == 0 {
+		fmt.Println("No TODOs found")
+		return
 	}
+	tableTodos := []table.Item{}
+	for _, todo := range todos {
+		tableTodos = append(tableTodos, table.Item{
+			Name:     todo.Name,
+			Desc:     todo.Description,
+			IsClosed: todo.IsClosed,
+		})
+	}
+	table.RenderTable(tableTodos)
 }
 
 var deleteTodoCmd = &cobra.Command{
