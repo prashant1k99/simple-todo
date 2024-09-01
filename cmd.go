@@ -139,6 +139,14 @@ func deleteTODO(cmd *cobra.Command, args []string) {
 		return
 	}
 
+	if id == 0 {
+		id, err = selectTODO()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+
 	_, err = dbQueries.Exec("DELETE FROM todos WHERE id = ?", id)
 	if err != nil {
 		fmt.Println(err)
