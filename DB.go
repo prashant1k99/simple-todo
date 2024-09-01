@@ -17,13 +17,14 @@ func RunMigration() error {
 		panic("Database connection is not initialized")
 	}
 
-	schemaFile := "./schema.sql"
-	sqlContent, err := os.ReadFile(schemaFile)
-	if err != nil {
-		return err
-	}
-
-	_, err = dbQueries.Exec(string(sqlContent))
+	_, err := dbQueries.Exec(`
+	CREATE TABLE IF NOT EXISTS todos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  description TEXT,
+  is_closed BOOLEAN NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);`)
 	if err != nil {
 		return err
 	}
