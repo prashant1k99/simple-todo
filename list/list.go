@@ -10,10 +10,9 @@ import (
 )
 
 type Item struct {
-	ID       int
-	Name     string
-	Desc     string
-	IsClosed bool
+	ID   int
+	Name string
+	Desc string
 }
 
 func (i Item) Title() string       { return i.Name }

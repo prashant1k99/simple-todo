@@ -17,4 +17,4 @@ Simple TODO is a cli is test CLI application that is built to practice GoLang sk
        c. [x] Add Form for creating TODO
        d. [x] Add form for updating TODO
        e. [x] Use List for selecting TODO for update and status-update
-       f. [ ] Give option to set-status as closed true or false if no flags are passed
+       f. [x] Give option to set-status as closed true or false if no flags are passed

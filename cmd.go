@@ -150,6 +150,7 @@ func selectTODO() (int, error) {
 		todoItems = append(todoItems, list.Item{
 			ID:   todo.ID,
 			Name: todo.Name,
+			Desc: todo.Description,
 		})
 	}
 	selectionResponse := list.RenderListItem(todoItems)
@@ -170,18 +171,11 @@ var setToDoStatusCmd = &cobra.Command{
 
 func setToDoStatus(cmd *cobra.Command, args []string) {
 	id, err := cmd.Flags().GetInt("id")
+
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-
-	isClosed, err := cmd.Flags().GetBool("is-closed")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println("isClosed", isClosed)
 
 	if id == 0 {
 		id, err = selectTODO()
@@ -189,6 +183,34 @@ func setToDoStatus(cmd *cobra.Command, args []string) {
 			fmt.Println(err)
 			return
 		}
+	}
+
+	isClosed, err := cmd.Flags().GetBool("is-closed")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if !cmd.Flags().Changed("is-closed") {
+		selectionResponse := list.RenderListItem([]list.Item{
+			{
+				ID:   1,
+				Name: "Close ToDo",
+				Desc: "This will close the selected ToDo",
+			},
+			{
+				ID:   2,
+				Name: "Reopen/Keep ToDo",
+				Desc: "This will reopen or keep the selected ToDo open",
+			},
+		})
+		if selectionResponse.Err != nil {
+			fmt.Println(selectionResponse.Err)
+			return
+		}
+		if !selectionResponse.Selected {
+			return
+		}
+		isClosed = selectionResponse.Item.ID == 1
 	}
 
 	_, err = dbQueries.Exec("UPDATE todos SET is_closed = ? WHERE id = ?", isClosed, id)
@@ -295,7 +317,7 @@ func init() {
 	rootCmd.AddCommand(deleteTodoCmd)
 
 	setToDoStatusCmd.Flags().IntP("id", "i", 0, "ID of the todo")
-	setToDoStatusCmd.Flags().BoolP("is-closed", "c", false, "Status of the todo")
+	setToDoStatusCmd.Flags().Bool("is-closed", true, "Status of the todo")
 	rootCmd.AddCommand(setToDoStatusCmd)
 
 	updateTodoCmd.Flags().IntP("id", "i", 0, "ID of the todo")
