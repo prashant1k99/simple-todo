@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/prashant1k99/simple-todo/form"
+	"github.com/prashant1k99/simple-todo/list"
 	"github.com/spf13/cobra"
 )
 
@@ -82,7 +83,7 @@ var listTodoCmd = &cobra.Command{
 	},
 }
 
-func listTODO() {
+func getAllTODOs() ([]ToDo, error) {
 	rows, err := dbQueries.Query("SELECT * FROM todos")
 	if err != nil {
 		fmt.Println(err)
@@ -96,12 +97,19 @@ func listTODO() {
 		var todo ToDo
 		err := rows.Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
 		if err != nil {
-			fmt.Println(err)
-			return
+			return nil, err
 		}
 		todos = append(todos, todo)
 	}
+	return todos, nil
+}
 
+func listTODO() {
+	todos, err := getAllTODOs()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	for _, todo := range todos {
 		fmt.Printf("ID: %d, Name: %s, Description: %s, IsClosed: %t, CreatedAt: %s\n", todo.ID, todo.Name, todo.Description, todo.IsClosed, todo.CreatedAt)
 	}
@@ -129,6 +137,31 @@ func deleteTODO(cmd *cobra.Command, args []string) {
 	fmt.Printf("Deleted todo with ID: %d\n", id)
 }
 
+func selectTODO() (int, error) {
+	todos, err := getAllTODOs()
+	if err != nil {
+		return 0, err
+	}
+	if len(todos) == 0 {
+		return 0, fmt.Errorf("No TODOs found")
+	}
+	todoItems := make([]list.Item, 0)
+	for _, todo := range todos {
+		todoItems = append(todoItems, list.Item{
+			ID:   todo.ID,
+			Name: todo.Name,
+		})
+	}
+	selectionResponse := list.RenderListItem(todoItems)
+	if selectionResponse.Err != nil {
+		return 0, selectionResponse.Err
+	}
+	if !selectionResponse.Selected {
+		return 0, fmt.Errorf("No TODO selected")
+	}
+	return selectionResponse.Item.ID, nil
+}
+
 var setToDoStatusCmd = &cobra.Command{
 	Use:   "set-status",
 	Short: "Set the status of a todo",
@@ -146,6 +179,16 @@ func setToDoStatus(cmd *cobra.Command, args []string) {
 	if err != nil {
 		fmt.Println(err)
 		return
+	}
+
+	fmt.Println("isClosed", isClosed)
+
+	if id == 0 {
+		id, err = selectTODO()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	_, err = dbQueries.Exec("UPDATE todos SET is_closed = ? WHERE id = ?", isClosed, id)
@@ -170,8 +213,11 @@ func updateTODO(cmd *cobra.Command, args []string) {
 		return
 	}
 	if id == 0 {
-		fmt.Println("ID is required to update a TODO")
-		return
+		id, err = selectTODO()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 
 	var todo ToDo
