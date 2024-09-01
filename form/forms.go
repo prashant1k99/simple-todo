@@ -1,4 +1,4 @@
-package main
+package form
 
 import (
 	"fmt"
@@ -9,10 +9,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type submissionMsg struct {
+type SubmissionMsg struct {
 	Name        string
 	Description string
-	submitted   bool
+	Submitted   bool
 }
 
 type model struct {
@@ -23,7 +23,7 @@ type model struct {
 	submitted  bool
 }
 
-func initialModel(defValues *submissionMsg) model {
+func initialModel(defValues *SubmissionMsg) model {
 	ti := textinput.New()
 	ti.Placeholder = "Add your todo name"
 	ti.SetValue(defValues.Name)
@@ -105,25 +105,25 @@ func (m model) View() string {
 	)
 }
 
-func RenderCreateForm(defValues *submissionMsg) (subMsg submissionMsg, err error) {
+func RenderCreateForm(defValues *SubmissionMsg) (subMsg SubmissionMsg, err error) {
 	p := tea.NewProgram(initialModel(defValues))
 	m, err := p.Run()
 	if err != nil {
-		return submissionMsg{}, err
+		return SubmissionMsg{}, err
 	}
 
 	finalModel, ok := m.(model)
 	if !ok {
-		return submissionMsg{}, fmt.Errorf("unexpected model type")
+		return SubmissionMsg{}, fmt.Errorf("unexpected model type")
 	}
 
 	if finalModel.submitted {
-		return submissionMsg{
+		return SubmissionMsg{
 			Name:        strings.TrimSpace(finalModel.inputName.Value()),
 			Description: strings.TrimSpace(finalModel.inputDesc.Value()),
-			submitted:   true,
+			Submitted:   true,
 		}, nil
 	}
 
-	return submissionMsg{}, nil
+	return SubmissionMsg{}, nil
 }

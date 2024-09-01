@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/prashant1k99/simple-todo/form"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +33,7 @@ var createTodoCmd = &cobra.Command{
 		}
 
 		if name == "" && description == "" {
-			msg, err := RenderCreateForm(&submissionMsg{
+			msg, err := form.RenderCreateForm(&form.SubmissionMsg{
 				Name:        "",
 				Description: "",
 			})
@@ -40,7 +41,7 @@ var createTodoCmd = &cobra.Command{
 				fmt.Printf("Error: %v\n", err)
 				return
 			}
-			if !msg.submitted {
+			if !msg.Submitted {
 				return
 			}
 			if msg.Name == "" {
@@ -193,7 +194,7 @@ func updateTODO(cmd *cobra.Command, args []string) {
 	}
 
 	if name == "" && description == "" {
-		msg, err := RenderCreateForm(&submissionMsg{
+		msg, err := form.RenderCreateForm(&form.SubmissionMsg{
 			Name:        todo.Name,
 			Description: todo.Description,
 		})
@@ -201,7 +202,7 @@ func updateTODO(cmd *cobra.Command, args []string) {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
-		if !msg.submitted {
+		if !msg.Submitted {
 			return
 		}
 		if msg.Name == "" {

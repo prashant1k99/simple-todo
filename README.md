@@ -16,3 +16,4 @@ Simple TODO is a cli is test CLI application that is built to practice GoLang sk
        b. [ ] Add Kanban View
        c. [x] Add Form for creating TODO
        d. [x] Add form for updating TODO
+       e. [ ] Use List for selecting TODO for update and status-update
