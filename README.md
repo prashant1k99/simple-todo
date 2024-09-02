@@ -17,3 +17,7 @@ Simple TODO is a cli is test CLI application that is built to practice GoLang sk
        c. [x] Add form for updating TODO
        d. [x] Use List for selecting TODO for update and status-update
        e. [x] Give option to set-status as closed true or false if no flags are passed
+
+### Additional Info:
+
+If you are using Windows or just want to use CSV file as your DB instead of SQLite, checkout to the `use-CSV-for-DB` branch, as using SQLite on Windows needs additional configuration.
