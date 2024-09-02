@@ -13,14 +13,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type ToDo struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	IsClosed    bool   `json:"isClosed"`
-	CreatedAt   string `json:"created_at"`
-}
-
 var createTodoCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new todo",
@@ -50,30 +42,23 @@ var createTodoCmd = &cobra.Command{
 				fmt.Println("Name is required to create a TODO")
 				return
 			}
-			createTODO(&ToDo{Name: msg.Name, Description: msg.Description})
+			createTODO(&Todo{Name: msg.Name, Description: msg.Description})
 		} else {
-			createTODO(&ToDo{Name: name, Description: description})
+			createTODO(&Todo{Name: name, Description: description})
 		}
 	},
 }
 
-func createTODO(todo *ToDo) {
+func createTODO(todo *Todo) {
 	if todo.Name == "" {
 		fmt.Println("Name is required to create a TODO")
 		return
 	}
-	fmt.Println("Creating todo", todo.Name)
-	result, err := dbQueries.Exec("INSERT INTO todos (name, description) VALUES (?, ?)", todo.Name, todo.Description)
+	err := addTodo(todo.Name, todo.Description)
 	if err != nil {
 		fmt.Println(err)
 	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Printf("Created todo with ID: %d\n", id)
+	fmt.Printf("Created todo")
 }
 
 var listTodoCmd = &cobra.Command{
@@ -84,23 +69,12 @@ var listTodoCmd = &cobra.Command{
 	},
 }
 
-func getAllTODOs() ([]ToDo, error) {
-	rows, err := dbQueries.Query("SELECT * FROM todos")
+func getAllTODOs() ([]Todo, error) {
+
+	var todos []Todo
+	todos, err := readTodos()
 	if err != nil {
-		fmt.Println(err)
-	}
-	defer rows.Close()
-
-	fmt.Println(rows.Columns())
-
-	var todos []ToDo
-	for rows.Next() {
-		var todo ToDo
-		err := rows.Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
-		if err != nil {
-			return nil, err
-		}
-		todos = append(todos, todo)
+		return nil, err
 	}
 	return todos, nil
 }
@@ -147,7 +121,7 @@ func deleteTODO(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	_, err = dbQueries.Exec("DELETE FROM todos WHERE id = ?", id)
+	err = deleteTodo(id)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -232,7 +206,7 @@ func setToDoStatus(cmd *cobra.Command, args []string) {
 		isClosed = selectionResponse.Item.ID == 1
 	}
 
-	_, err = dbQueries.Exec("UPDATE todos SET is_closed = ? WHERE id = ?", isClosed, id)
+	err = updateTodoStatus(id, isClosed)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -261,8 +235,8 @@ func updateTODO(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	var todo ToDo
-	err = dbQueries.QueryRow("SELECT id, name, description, is_closed, created_at FROM todos WHERE id = ?", id).Scan(&todo.ID, &todo.Name, &todo.Description, &todo.IsClosed, &todo.CreatedAt)
+	var todo Todo
+	todo, err = getTodoById(id)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -300,7 +274,7 @@ func updateTODO(cmd *cobra.Command, args []string) {
 		todo.Description = msg.Description
 	}
 
-	_, err = dbQueries.Exec("UPDATE todos SET name = ?, description = ? WHERE id = ?", todo.Name, todo.Description, todo.ID)
+	err = updateTodo(id, todo.Name, todo.Description)
 	if err != nil {
 		fmt.Println(err)
 		return

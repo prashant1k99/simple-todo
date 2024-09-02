@@ -5,7 +5,5 @@ package main
 
 func main() {
 	initDB()
-	defer closeDB()
-
 	rootCmd.Execute()
 }
