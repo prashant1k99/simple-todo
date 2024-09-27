@@ -10,9 +10,9 @@ import (
 )
 
 type Item struct {
-	ID   int
 	Name string
 	Desc string
+	ID   int
 }
 
 func (i Item) Title() string       { return i.Name }
@@ -89,8 +89,8 @@ func initialModel(defValues []Item) model {
 
 type SelectionResponse struct {
 	Err      error
-	Selected bool
 	Item     Item
+	Selected bool
 }
 
 func RenderListItem(defaultValuesToRender []Item) SelectionResponse {

@@ -14,11 +14,11 @@ import (
 )
 
 type ToDo struct {
-	ID          int    `json:"id"`
+	CreatedAt   string `json:"created_at"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	ID          int    `json:"id"`
 	IsClosed    bool   `json:"isClosed"`
-	CreatedAt   string `json:"created_at"`
 }
 
 var createTodoCmd = &cobra.Command{
@@ -190,7 +190,6 @@ var setToDoStatusCmd = &cobra.Command{
 
 func setToDoStatus(cmd *cobra.Command, args []string) {
 	id, err := cmd.Flags().GetInt("id")
-
 	if err != nil {
 		fmt.Println(err)
 		return

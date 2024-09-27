@@ -16,10 +16,10 @@ type SubmissionMsg struct {
 }
 
 type model struct {
-	focusIndex int
-	inputName  textinput.Model
-	inputDesc  textarea.Model
 	err        error
+	inputDesc  textarea.Model
+	inputName  textinput.Model
+	focusIndex int
 	submitted  bool
 }
 
