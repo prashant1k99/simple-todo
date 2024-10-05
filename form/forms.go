@@ -94,7 +94,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 // View implements tea.Model.
 func (m model) View() string {
 	return fmt.Sprintf(
-		"Name: %s\nDescription: %s\n\n%s",
+		"Name:\n%s\nDescription:\n%s\n\n%s",
 		m.inputName.View(),
 		m.inputDesc.View(),
 		"(ctrl+c to quit, tab to switch, enter to submit)",

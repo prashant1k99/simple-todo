@@ -22,8 +22,9 @@ type ToDo struct {
 }
 
 var createTodoCmd = &cobra.Command{
-	Use:   "create",
-	Short: "Create a new todo",
+	Use:     "create",
+	Short:   "Create a new todo",
+	Aliases: []string{"c"},
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := cmd.Flags().GetString("name")
 		if err != nil {
@@ -77,8 +78,9 @@ func createTODO(todo *ToDo) {
 }
 
 var listTodoCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all todos",
+	Use:     "list",
+	Short:   "List all todos",
+	Aliases: []string{"l"},
 	Run: func(cmd *cobra.Command, args []string) {
 		listTODO()
 	},
@@ -127,9 +129,10 @@ func listTODO() {
 }
 
 var deleteTodoCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete a todo",
-	Run:   deleteTODO,
+	Use:     "delete",
+	Short:   "Delete a todo",
+	Aliases: []string{"d"},
+	Run:     deleteTODO,
 }
 
 func deleteTODO(cmd *cobra.Command, args []string) {
@@ -183,9 +186,10 @@ func selectTODO() (int, error) {
 }
 
 var setToDoStatusCmd = &cobra.Command{
-	Use:   "set-status",
-	Short: "Set the status of a todo",
-	Run:   setToDoStatus,
+	Use:     "set-status",
+	Short:   "Set the status of a todo",
+	Aliases: []string{"ss"},
+	Run:     setToDoStatus,
 }
 
 func setToDoStatus(cmd *cobra.Command, args []string) {
@@ -241,9 +245,10 @@ func setToDoStatus(cmd *cobra.Command, args []string) {
 }
 
 var updateTodoCmd = &cobra.Command{
-	Use:   "update",
-	Short: "Update a todo",
-	Run:   updateTODO,
+	Use:     "update",
+	Short:   "Update a todo",
+	Aliases: []string{"u"},
+	Run:     updateTODO,
 }
 
 func updateTODO(cmd *cobra.Command, args []string) {
