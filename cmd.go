@@ -93,8 +93,6 @@ func getAllTODOs() ([]ToDo, error) {
 	}
 	defer rows.Close()
 
-	fmt.Println(rows.Columns())
-
 	var todos []ToDo
 	for rows.Next() {
 		var todo ToDo

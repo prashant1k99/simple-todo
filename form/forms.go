@@ -35,12 +35,12 @@ func initialModel(defValues *SubmissionMsg) model {
 	}
 	ti.Focus()
 	ti.CharLimit = 156
-	ti.Width = 20
+	// ti.Width = 20
 
 	ta := textarea.New()
 	ta.SetValue(defValues.Description)
 	ta.Placeholder = "Add your todo description"
-	ta.SetWidth(50)
+	// ta.SetWidth(50)
 	ta.SetHeight(3)
 
 	return model{

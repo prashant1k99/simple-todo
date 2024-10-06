@@ -27,7 +27,8 @@ type model struct {
 }
 
 func (m model) Init() tea.Cmd {
-	return nil
+	return tea.Quit
+	// return nil
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -95,6 +96,7 @@ func intitialModel(defValues []Item) model {
 	}
 	return m
 }
+
 func RenderTable(listToRender []Item) {
 	p := tea.NewProgram(intitialModel(listToRender))
 
@@ -102,5 +104,4 @@ func RenderTable(listToRender []Item) {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
-
 }
